@@ -3,7 +3,7 @@ package com.company.youtubeanalyticstool.model;
 import javax.persistence.*;
 
 @Entity
-public class Video {
+public class VideoStats {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,7 +20,7 @@ public class Video {
     @Column(name = "comment_count", nullable = false)
     private long commentCount;
 
-    public Video(String videoID, long viewsCount, long likeCount, long dislikeCount, long commentCount) {
+    public VideoStats(String videoID, long viewsCount, long likeCount, long dislikeCount, long commentCount) {
         this.videoID = videoID;
         this.viewsCount = viewsCount;
         this.likeCount = likeCount;
@@ -28,7 +28,7 @@ public class Video {
         this.commentCount = commentCount;
     }
 
-    public Video(){
+    public VideoStats(){
 
     }
 

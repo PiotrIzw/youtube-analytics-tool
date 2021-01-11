@@ -3,7 +3,7 @@ package com.company.youtubeanalyticstool.model;
 import javax.persistence.*;
 
 @Entity
-public class Channel {
+public class ChannelStats {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -13,12 +13,12 @@ public class Channel {
     @Column(name = "subscriptions_count", nullable = false)
     private int subscriptionsCount;
 
-    public Channel(String channelName, int subscriptionsCount) {
+    public ChannelStats(String channelName, int subscriptionsCount) {
         this.channelName = channelName;
         this.subscriptionsCount = subscriptionsCount;
     }
 
-    public Channel(){
+    public ChannelStats(){
 
     }
     public long getId() {
