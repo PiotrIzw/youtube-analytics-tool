@@ -1,6 +1,7 @@
 package com.company.youtubeanalyticstool.service;
 
-import com.company.youtubeanalyticstool.model.VideoStats;
+import com.company.youtubeanalyticstool.exception.ResourceNotFoundException;
+import com.company.youtubeanalyticstool.model.videos.VideoStats;
 import com.company.youtubeanalyticstool.repository.VideoStatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,8 @@ public class VideoStatsServiceImpl implements VideoStatsService{
 
     @Override
     public VideoStats get(long id) {
-        return videoStatsRepository.findById(id).get();
+        return videoStatsRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Video", "id", id));
     }
 
     @Override

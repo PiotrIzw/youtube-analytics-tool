@@ -1,23 +1,24 @@
 package com.company.youtubeanalyticstool.service;
 
-import com.company.youtubeanalyticstool.model.VideoStats;
+import com.company.youtubeanalyticstool.exception.ResourceNotFoundException;
+import com.company.youtubeanalyticstool.model.videos.ChannelStats;
+import com.company.youtubeanalyticstool.model.videos.VideoStats;
+import com.company.youtubeanalyticstool.repository.ChannelStatsRepository;
 import com.company.youtubeanalyticstool.repository.VideoStatsRepository;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.YouTubeRequestInitializer;
-import com.google.api.services.youtube.model.Video;
+import com.google.api.services.youtube.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class YouTubeAPIService {
@@ -30,14 +31,14 @@ public class YouTubeAPIService {
     private Environment env;
     @Autowired
     VideoStatsRepository videoStatsRepository;
+    @Autowired
+    ChannelStatsRepository channelStatsRepository;
 
     private YouTube youTube;
 
     @Bean
-    public void setYouTubeAPI(){
-        youTube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, new HttpRequestInitializer() {
-            public void initialize(HttpRequest request) throws IOException {
-            }
+    public void setYouTubeAPI() {
+        youTube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, request -> {
         }).setApplicationName("VideoStats")
                 .setYouTubeRequestInitializer(new YouTubeRequestInitializer(env.getProperty("youtube.apikey"))).build();
     }
@@ -57,8 +58,9 @@ public class YouTubeAPIService {
         return videoStatsRepository.save(videoStats);
     }
 
-    public VideoStats updateVideoStats(long id) throws IOException{
-        VideoStats video = videoStatsRepository.findById(id).get();
+    public VideoStats updateVideoStats(long id) throws IOException {
+        VideoStats video = videoStatsRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Video", "id", id));
 
         YouTube.Videos.List list = youTube.videos().list("statistics");
         list.setId(video.getVideoID());
@@ -70,5 +72,85 @@ public class YouTubeAPIService {
         video.setViewsCount(v.getStatistics().getViewCount().longValue());
 
         return videoStatsRepository.save(video);
+    }
+
+    public ChannelStats saveChannelStats(String channelId) throws IOException {
+        YouTube.Channels.List channels = youTube.channels().list("snippet, statistics");
+        channels.setId(channelId);
+        ChannelListResponse channelResponse = channels.execute();
+
+
+        Channel c = channelResponse.getItems().get(0);
+
+        ChannelStats channelStats = new ChannelStats();
+        channelStats.setChannelId(channelId);
+        channelStats.setChannelName(c.getSnippet().getTitle());
+        channelStats.setSubscriptionsCount(c.getStatistics().getSubscriberCount().longValue());
+
+
+        return channelStatsRepository.save(channelStats);
+    }
+
+    public ChannelStats updateChannel(long channelId) throws IOException {
+        ChannelStats channel = channelStatsRepository.findById(channelId)
+                .orElseThrow(() -> new ResourceNotFoundException("Channel", "id", channelId));
+        YouTube.Channels.List channels = youTube.channels().list("snippet, statistics");
+        channels.setId(channel.getChannelId());
+        ChannelListResponse channelResponse = channels.execute();
+
+        Channel c = channelResponse.getItems().get(0);
+
+        channel.setChannelName(c.getSnippet().getTitle());
+        channel.setSubscriptionsCount(c.getStatistics().getSubscriberCount().longValue());
+
+        for(VideoStats channelStats : channel.getVideoStats()){
+            updateVideoStats(channelStats.getId());
+        }
+
+
+        return channelStatsRepository.save(channel);
+    }
+
+    public List<ChannelStats> updateAllChannels() throws IOException {
+        List<ChannelStats> channelStats = channelStatsRepository.findAll();
+
+        for (ChannelStats channel : channelStats) {
+            updateChannel(channel.getId());
+        }
+
+        return channelStatsRepository.findAll();
+    }
+
+    public List<VideoStats> saveAllChannelVideos(long channelId) throws IOException {
+
+        ChannelStats channel = channelStatsRepository.findById(channelId)
+                .orElseThrow(() -> new ResourceNotFoundException("Channel", "id", channelId));
+        String ytChannelId = channel.getChannelId();
+
+
+        YouTube.Search.List search = youTube.search().list("id,snippet");
+        search.setChannelId(ytChannelId);
+        search.setMaxResults(10L);
+        search.setOrder("date");
+
+        SearchListResponse searchResponse = search.execute();
+
+        List<SearchResult> searchResultList = searchResponse.getItems();
+        if (searchResultList != null) {
+            for (SearchResult singleVideo : searchResultList) {
+
+                if(singleVideo.getId().getVideoId() != null){
+
+                    VideoStats videoStats = saveVideoStats(singleVideo.getId().getVideoId());
+                    videoStats.setChannelStats(channel);
+                    videoStatsRepository.save(videoStats);
+                }
+            }
+        }
+        long channelRepoId = channel.getId();
+        return channelStatsRepository.findById(channelRepoId)
+        .orElseThrow(() -> new ResourceNotFoundException("Channel", "id", channelId))
+        .getVideoStats();
+
     }
 }

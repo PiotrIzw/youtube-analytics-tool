@@ -1,4 +1,6 @@
-package com.company.youtubeanalyticstool.model;
+package com.company.youtubeanalyticstool.model.videos;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
@@ -19,13 +21,18 @@ public class VideoStats {
     private long dislikeCount;
     @Column(name = "comment_count", nullable = false)
     private long commentCount;
+    @ManyToOne()
+    @JoinColumn(name = "channel_id")
+    @JsonIgnore
+    private ChannelStats channelStats;
 
-    public VideoStats(String videoID, long viewsCount, long likeCount, long dislikeCount, long commentCount) {
+    public VideoStats(String videoID, long viewsCount, long likeCount, long dislikeCount, long commentCount, ChannelStats channelStats) {
         this.videoID = videoID;
         this.viewsCount = viewsCount;
         this.likeCount = likeCount;
         this.dislikeCount = dislikeCount;
         this.commentCount = commentCount;
+        this.channelStats = channelStats;
     }
 
     public VideoStats(){
@@ -78,5 +85,13 @@ public class VideoStats {
 
     public void setCommentCount(long commentCount) {
         this.commentCount = commentCount;
+    }
+
+    public ChannelStats getChannelStats() {
+        return channelStats;
+    }
+
+    public void setChannelStats(ChannelStats channelStats) {
+        this.channelStats = channelStats;
     }
 }

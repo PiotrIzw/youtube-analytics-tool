@@ -1,6 +1,6 @@
 package com.company.youtubeanalyticstool.controller;
 
-import com.company.youtubeanalyticstool.model.VideoStats;
+import com.company.youtubeanalyticstool.model.videos.VideoStats;
 import com.company.youtubeanalyticstool.service.VideoStatsService;
 import com.company.youtubeanalyticstool.service.YouTubeAPIService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,6 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
-//TODO clear tests & add proper implementations
 @RestController
 @RequestMapping("/api")
 public class VideoStatsController {
@@ -30,12 +29,13 @@ public class VideoStatsController {
     public VideoStats getVideoStatistics(@PathVariable long id){
         return videoStatsService.get(id);
     }
+
     @GetMapping("/video")
     public List<VideoStats> getAllVideosStatistics(){
         return videoStatsService.getAll();
     }
 
-    @PutMapping("/video/{id}/update")
+    @PutMapping("/video/{id}")
     public VideoStats updateVideoStatistics(@PathVariable long id) throws IOException {
         return youTubeAPIService.updateVideoStats(id);
 
