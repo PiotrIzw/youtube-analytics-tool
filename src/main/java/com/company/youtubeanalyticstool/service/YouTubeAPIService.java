@@ -102,31 +102,38 @@ public class YouTubeAPIService {
         return channelStatsRepository.save(channelStats);
     }
 
-    public ChannelStats updateChannel(long channelId) throws IOException {
+    public ChannelStats updateChannel(long channelId, String userId) throws IOException {
         ChannelStats channel = channelStatsRepository.findById(channelId)
                 .orElseThrow(() -> new ResourceNotFoundException("Channel", "id", channelId));
-        YouTube.Channels.List channels = youTube.channels().list("snippet, statistics");
-        channels.setId(channel.getChannelId());
-        ChannelListResponse channelResponse = channels.execute();
 
-        Channel c = channelResponse.getItems().get(0);
+        if(channel.getUserDAO().getUsername().equals(userId)) {
 
-        channel.setChannelName(c.getSnippet().getTitle());
-        channel.setSubscriptionsCount(c.getStatistics().getSubscriberCount().longValue());
+            YouTube.Channels.List channels = youTube.channels().list("snippet, statistics");
+            channels.setId(channel.getChannelId());
+            ChannelListResponse channelResponse = channels.execute();
 
-        for(VideoStats channelStats : channel.getVideoStats()){
-            updateVideoStats(channelStats.getId());
+            Channel c = channelResponse.getItems().get(0);
+
+            channel.setChannelName(c.getSnippet().getTitle());
+            channel.setSubscriptionsCount(c.getStatistics().getSubscriberCount().longValue());
+
+            for (VideoStats channelStats : channel.getVideoStats()) {
+                updateVideoStats(channelStats.getId());
+            }
+
+            return channelStatsRepository.save(channel);
         }
-
-
-        return channelStatsRepository.save(channel);
+        else return null;
     }
 
-    public List<ChannelStats> updateAllChannels() throws IOException {
-        List<ChannelStats> channelStats = channelStatsRepository.findAll();
+    public List<ChannelStats> updateAllChannels(String userId) throws IOException {
+
+        UserDAO user = userRepository.findByUsername(userId);
+
+        List<ChannelStats> channelStats = channelStatsRepository.findAllByUserDAO(user);
 
         for (ChannelStats channel : channelStats) {
-            updateChannel(channel.getId());
+            updateChannel(channel.getId(), userId);
         }
 
         return channelStatsRepository.findAll();

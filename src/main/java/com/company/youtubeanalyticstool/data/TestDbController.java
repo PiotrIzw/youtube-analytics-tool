@@ -29,30 +29,24 @@ public class TestDbController {
     @PostMapping("/test")
     public void fillDatabaseWithData(Principal principal) throws IOException {
 
-        UserDAO userDAO = new UserDAO();
-        userDAO.setUsername("jankowalski");
-        userDAO.setPassword("password");
-        userDAO.setRole("ROLE_ADMIN");
-
-        userRepository.save(userDAO);
-
-        youTubeAPIService.saveVideoStats("GX5IZnS6GJA", userDAO.getUsername());
-        youTubeAPIService.saveVideoStats("akSynocjEK0", userDAO.getUsername());
-        youTubeAPIService.saveVideoStats("PMxjpUwjzSg", userDAO.getUsername());
-        youTubeAPIService.saveVideoStats("4oUb2p0EhYI", userDAO.getUsername());
-        youTubeAPIService.saveVideoStats("0t-sG8FhC4E", userDAO.getUsername());
+        String username = principal.getName();
+        youTubeAPIService.saveVideoStats("GX5IZnS6GJA", username);
+        youTubeAPIService.saveVideoStats("akSynocjEK0", username);
+        youTubeAPIService.saveVideoStats("PMxjpUwjzSg", username);
+        youTubeAPIService.saveVideoStats("4oUb2p0EhYI", username);
+        youTubeAPIService.saveVideoStats("0t-sG8FhC4E", username);
 
 
-        youTubeAPIService.saveChannelStats("UC4xKdmAXFh4ACyhpiQ_3qBw", userDAO.getUsername());
+        youTubeAPIService.saveChannelStats("UC4xKdmAXFh4ACyhpiQ_3qBw", username);
 
-        youTubeAPIService.saveChannelStats("UCs3GloeEzu5rDlQlSLGrr4A", userDAO.getUsername());
-        youTubeAPIService.saveChannelStats("UCUr1w6sHtgj1JniKV8vWXMw", userDAO.getUsername());
-        youTubeAPIService.saveChannelStats("UCHOtaAJCOBDUWIcL4372D9A", userDAO.getUsername());
-        youTubeAPIService.saveChannelStats("UC0WP5P-ufpRfjbNrmOWwLBQ", userDAO.getUsername());
+        youTubeAPIService.saveChannelStats("UCs3GloeEzu5rDlQlSLGrr4A", username);
+        youTubeAPIService.saveChannelStats("UCUr1w6sHtgj1JniKV8vWXMw", username);
+        youTubeAPIService.saveChannelStats("UCHOtaAJCOBDUWIcL4372D9A", username);
+        youTubeAPIService.saveChannelStats("UC0WP5P-ufpRfjbNrmOWwLBQ", username);
 
         List<ChannelStats> allChannels = channelStatsRepository.findAll();
         for(ChannelStats channelStats : allChannels){
-            youTubeAPIService.saveAllChannelVideos(channelStats.getId(), userDAO.getUsername());
+            youTubeAPIService.saveAllChannelVideos(channelStats.getId(), username);
         }
 
     }

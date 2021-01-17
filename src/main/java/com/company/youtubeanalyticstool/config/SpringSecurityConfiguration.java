@@ -57,16 +57,6 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter{
                     .authorizeRequests()
                     //admin have access to everything
                     .antMatchers("/api/**").hasRole("ADMIN")
-
-                    //user methods
-                    .antMatchers("/api/channel").hasRole("USER")
-                    .antMatchers("/api/**").hasRole("USER")
-                    .antMatchers("/api/**").hasRole("USER")
-                    .antMatchers("/api/**").hasRole("USER")
-                    .antMatchers("/api/**").hasRole("USER")
-                    .antMatchers("/api/**").hasRole("USER")
-                    .antMatchers("/api/**").hasRole("USER")
-                    .antMatchers("/api/**").hasRole("USER")
                     .antMatchers("/h2-console/*").permitAll()
                     .antMatchers("/authenticate", "/register").permitAll().anyRequest().authenticated()
                     .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).

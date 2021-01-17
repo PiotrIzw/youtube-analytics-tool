@@ -39,28 +39,23 @@ public class ChannelStatsController {
 
 
     @GetMapping("/channel")
-    public List<ChannelStats> getAllChannels(){
-        return channelStatsService.getAll();
+    public List<ChannelStats> getAllChannels(Principal principal){
+        return channelStatsService.getAll(principal.getName());
     }
+
     @GetMapping("/channel/{id}")
-    public ChannelStats getChannelStats(@PathVariable long id){
-        return channelStatsService.get(id);
+    public ChannelStats getChannelStats(@PathVariable long id, Principal principal){
+        return channelStatsService.get(id, principal.getName());
     }
 
     @PutMapping("/channel/{id}")
-    public ChannelStats updateChannelStats(@PathVariable long id) throws IOException {
-        return youTubeAPIService.updateChannel(id);
+    public ChannelStats updateChannelStats(@PathVariable long id, Principal principal) throws IOException {
+        return youTubeAPIService.updateChannel(id, principal.getName());
     }
 
     @PutMapping("/channel")
-    public List<ChannelStats> updateAllChannels() throws IOException {
-        return youTubeAPIService.updateAllChannels();
-    }
-
-    @RequestMapping("/helloadmin")
-    public String getAdmin()
-    {
-        return "Hello Admin";
+    public List<ChannelStats> updateAllChannels(Principal principal) throws IOException {
+        return youTubeAPIService.updateAllChannels(principal.getName());
     }
 
 }
