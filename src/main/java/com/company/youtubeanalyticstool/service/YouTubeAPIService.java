@@ -49,7 +49,7 @@ public class YouTubeAPIService {
 
     public VideoStats saveVideoStats(String videoID, String username) throws IOException {
 
-        UserDAO userDAO= userRepository.findByUsername(username);
+        UserDAO userDAO = userRepository.findByUsername(username);
 
         YouTube.Videos.List list = youTube.videos().list("statistics");
         list.setId(videoID);
@@ -81,7 +81,10 @@ public class YouTubeAPIService {
         return videoStatsRepository.save(video);
     }
 
-    public ChannelStats saveChannelStats(String channelId) throws IOException {
+    public ChannelStats saveChannelStats(String channelId, String username) throws IOException {
+
+        UserDAO user = userRepository.findByUsername(username);
+
         YouTube.Channels.List channels = youTube.channels().list("snippet, statistics");
         channels.setId(channelId);
         ChannelListResponse channelResponse = channels.execute();
@@ -93,6 +96,7 @@ public class YouTubeAPIService {
         channelStats.setChannelId(channelId);
         channelStats.setChannelName(c.getSnippet().getTitle());
         channelStats.setSubscriptionsCount(c.getStatistics().getSubscriberCount().longValue());
+        channelStats.setUserDAO(user);
 
 
         return channelStatsRepository.save(channelStats);
@@ -131,11 +135,11 @@ public class YouTubeAPIService {
     public List<VideoStats> saveAllChannelVideos(long channelId, String username) throws IOException {
 
         UserDAO user = userRepository.findByUsername(username);
+        long userId = user.getId();
 
         ChannelStats channel = channelStatsRepository.findById(channelId)
                 .orElseThrow(() -> new ResourceNotFoundException("Channel", "id", channelId));
         String ytChannelId = channel.getChannelId();
-
 
         YouTube.Search.List search = youTube.search().list("id,snippet");
         search.setChannelId(ytChannelId);

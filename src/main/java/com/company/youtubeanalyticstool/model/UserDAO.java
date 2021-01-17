@@ -57,4 +57,27 @@ public class UserDAO {
         this.password = password;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public List<ChannelStats> getChannelStatsList() {
+        return channelStatsList;
+    }
+
+    public void setChannelStatsList(List<ChannelStats> channelStatsList) {
+        this.channelStatsList = channelStatsList;
+    }
+
+    public List<VideoStats> getVideoStatsList() {
+        return videoStatsList;
+    }
+
+    public void setVideoStatsList(List<VideoStats> videoStatsList) {
+        this.videoStatsList = videoStatsList;
+    }
 }

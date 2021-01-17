@@ -3,6 +3,7 @@ package com.company.youtubeanalyticstool.controller;
 import com.company.youtubeanalyticstool.model.ChannelStats;
 import com.company.youtubeanalyticstool.model.VideoStats;
 import com.company.youtubeanalyticstool.service.ChannelStatsService;
+import com.company.youtubeanalyticstool.service.UserServiceImpl;
 import com.company.youtubeanalyticstool.service.YouTubeAPIService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,16 +21,22 @@ public class ChannelStatsController {
     YouTubeAPIService youTubeAPIService;
     @Autowired
     ChannelStatsService channelStatsService;
+    @Autowired
+    UserServiceImpl userService;
 
+    //user,admin
     @PostMapping("/channel")
-    public ChannelStats saveChannelStats(@Valid @RequestBody String channelId) throws IOException {
-        return youTubeAPIService.saveChannelStats(channelId);
+    public ChannelStats saveChannelStats(@Valid @RequestBody String channelId, Principal principal) throws IOException {
+        return youTubeAPIService.saveChannelStats(channelId, principal.getName());
     }
 
+    //user, admin
     @PostMapping("/channel/{id}")
     public List<VideoStats> saveChannelVideoStats(@PathVariable long id, Principal principal) throws IOException {
+
         return youTubeAPIService.saveAllChannelVideos(id, principal.getName());
     }
+
 
     @GetMapping("/channel")
     public List<ChannelStats> getAllChannels(){

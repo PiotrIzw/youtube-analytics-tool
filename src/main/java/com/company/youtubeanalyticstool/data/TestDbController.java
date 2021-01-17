@@ -25,6 +25,7 @@ public class TestDbController {
     @Autowired
     UserRepository userRepository;
 
+    //only admin
     @PostMapping("/test")
     public void fillDatabaseWithData(Principal principal) throws IOException {
 
@@ -42,12 +43,12 @@ public class TestDbController {
         youTubeAPIService.saveVideoStats("0t-sG8FhC4E", userDAO.getUsername());
 
 
-        youTubeAPIService.saveChannelStats("UC4xKdmAXFh4ACyhpiQ_3qBw");
+        youTubeAPIService.saveChannelStats("UC4xKdmAXFh4ACyhpiQ_3qBw", userDAO.getUsername());
 
-        youTubeAPIService.saveChannelStats("UCs3GloeEzu5rDlQlSLGrr4A");
-        youTubeAPIService.saveChannelStats("UCUr1w6sHtgj1JniKV8vWXMw");
-        youTubeAPIService.saveChannelStats("UCHOtaAJCOBDUWIcL4372D9A");
-        youTubeAPIService.saveChannelStats("UC0WP5P-ufpRfjbNrmOWwLBQ");
+        youTubeAPIService.saveChannelStats("UCs3GloeEzu5rDlQlSLGrr4A", userDAO.getUsername());
+        youTubeAPIService.saveChannelStats("UCUr1w6sHtgj1JniKV8vWXMw", userDAO.getUsername());
+        youTubeAPIService.saveChannelStats("UCHOtaAJCOBDUWIcL4372D9A", userDAO.getUsername());
+        youTubeAPIService.saveChannelStats("UC0WP5P-ufpRfjbNrmOWwLBQ", userDAO.getUsername());
 
         List<ChannelStats> allChannels = channelStatsRepository.findAll();
         for(ChannelStats channelStats : allChannels){
