@@ -29,22 +29,22 @@ public class VideoStatsController {
 
     @GetMapping("video/{id}")
     public VideoStats getVideoStatistics(@PathVariable long id, Principal principal){
-        return videoStatsService.get(id);
+        return videoStatsService.get(id, principal.getName());
     }
 
     @GetMapping("/video")
     public List<VideoStats> getAllVideosStatistics(Principal principal){
-        return videoStatsService.getAll();
+        return videoStatsService.getAll(principal.getName());
     }
 
     @PutMapping("/video/{id}")
     public VideoStats updateVideoStatistics(@PathVariable long id, Principal principal) throws IOException {
-        return youTubeAPIService.updateVideoStats(id);
+        return youTubeAPIService.updateVideoStats(id, principal.getName());
 
     }
     @DeleteMapping("/video/{id}")
     public void deleteVideoStatistics(@PathVariable long id, Principal principal){
-        videoStatsService.delete(id);
+        videoStatsService.delete(id, principal.getName());
     }
 
 }

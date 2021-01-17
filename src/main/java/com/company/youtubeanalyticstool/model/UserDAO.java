@@ -1,5 +1,7 @@
 package com.company.youtubeanalyticstool.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.*;
@@ -12,11 +14,11 @@ public class UserDAO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column
+    @Column(unique = true, nullable = false)
     private String username;
-    @Column
+    @Column(nullable = false)
     private String password;
-    @Column
+    @Column(nullable = false)
     private String role;
 
 

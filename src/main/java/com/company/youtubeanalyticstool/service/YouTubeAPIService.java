@@ -65,9 +65,12 @@ public class YouTubeAPIService {
         return videoStatsRepository.save(videoStats);
     }
 
-    public VideoStats updateVideoStats(long id) throws IOException {
-        VideoStats video = videoStatsRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Video", "id", id));
+    public VideoStats updateVideoStats(long id, String username) throws IOException {
+
+        UserDAO userDAO = userRepository.findByUsername(username);
+
+        VideoStats video = videoStatsRepository.getVideoStatsByIdAndUserDAO(id, userDAO);
+
 
         YouTube.Videos.List list = youTube.videos().list("statistics");
         list.setId(video.getVideoID());
@@ -94,6 +97,7 @@ public class YouTubeAPIService {
 
         ChannelStats channelStats = new ChannelStats();
         channelStats.setChannelId(channelId);
+        System.out.println(c.getSnippet().getTitle());
         channelStats.setChannelName(c.getSnippet().getTitle());
         channelStats.setSubscriptionsCount(c.getStatistics().getSubscriberCount().longValue());
         channelStats.setUserDAO(user);
@@ -118,7 +122,7 @@ public class YouTubeAPIService {
             channel.setSubscriptionsCount(c.getStatistics().getSubscriberCount().longValue());
 
             for (VideoStats channelStats : channel.getVideoStats()) {
-                updateVideoStats(channelStats.getId());
+                updateVideoStats(channelStats.getId(), userId);
             }
 
             return channelStatsRepository.save(channel);

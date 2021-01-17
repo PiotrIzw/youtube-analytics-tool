@@ -56,7 +56,8 @@ public class SpringSecurityConfiguration extends WebSecurityConfigurerAdapter{
             http.csrf().disable()
                     .authorizeRequests()
                     //admin have access to everything
-                    .antMatchers("/api/**").hasRole("ADMIN")
+                    .antMatchers("/api/**").hasAnyRole("ADMIN", "USER")
+                    .antMatchers("/admin/**").hasRole("ADMIN")
                     .antMatchers("/h2-console/*").permitAll()
                     .antMatchers("/authenticate", "/register").permitAll().anyRequest().authenticated()
                     .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).

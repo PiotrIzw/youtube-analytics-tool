@@ -6,6 +6,8 @@ import com.company.youtubeanalyticstool.service.ChannelStatsService;
 import com.company.youtubeanalyticstool.service.UserServiceImpl;
 import com.company.youtubeanalyticstool.service.YouTubeAPIService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,6 +31,7 @@ public class ChannelStatsController {
     public ChannelStats saveChannelStats(@Valid @RequestBody String channelId, Principal principal) throws IOException {
         return youTubeAPIService.saveChannelStats(channelId, principal.getName());
     }
+
 
     //user, admin
     @PostMapping("/channel/{id}")
@@ -56,6 +59,11 @@ public class ChannelStatsController {
     @PutMapping("/channel")
     public List<ChannelStats> updateAllChannels(Principal principal) throws IOException {
         return youTubeAPIService.updateAllChannels(principal.getName());
+    }
+
+    @DeleteMapping("/channel/{id}")
+    public void deleteChannel(@PathVariable long id, Principal principal){
+        channelStatsService.delete(id, principal.getName());
     }
 
 }
