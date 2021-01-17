@@ -1,12 +1,13 @@
 package com.company.youtubeanalyticstool.controller;
 
-import com.company.youtubeanalyticstool.model.videos.VideoStats;
+import com.company.youtubeanalyticstool.model.VideoStats;
 import com.company.youtubeanalyticstool.service.VideoStatsService;
 import com.company.youtubeanalyticstool.service.YouTubeAPIService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -21,27 +22,28 @@ public class VideoStatsController {
 
 
     @PostMapping("/video")
-    public VideoStats saveVideoStatistics(@Valid @RequestBody String videoID) throws IOException {
-        return youTubeAPIService.saveVideoStats(videoID);
+    public VideoStats saveVideoStatistics(@Valid @RequestBody String videoID, Principal principal) throws IOException {
+
+        return youTubeAPIService.saveVideoStats(videoID, principal.getName());
     }
 
     @GetMapping("video/{id}")
-    public VideoStats getVideoStatistics(@PathVariable long id){
+    public VideoStats getVideoStatistics(@PathVariable long id, Principal principal){
         return videoStatsService.get(id);
     }
 
     @GetMapping("/video")
-    public List<VideoStats> getAllVideosStatistics(){
+    public List<VideoStats> getAllVideosStatistics(Principal principal){
         return videoStatsService.getAll();
     }
 
     @PutMapping("/video/{id}")
-    public VideoStats updateVideoStatistics(@PathVariable long id) throws IOException {
+    public VideoStats updateVideoStatistics(@PathVariable long id, Principal principal) throws IOException {
         return youTubeAPIService.updateVideoStats(id);
 
     }
     @DeleteMapping("/video/{id}")
-    public void deleteVideoStatistics(@PathVariable long id){
+    public void deleteVideoStatistics(@PathVariable long id, Principal principal){
         videoStatsService.delete(id);
     }
 

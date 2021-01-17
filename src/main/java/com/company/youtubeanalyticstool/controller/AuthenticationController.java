@@ -3,7 +3,7 @@ package com.company.youtubeanalyticstool.controller;
 import com.company.youtubeanalyticstool.config.JwtUtil;
 import com.company.youtubeanalyticstool.model.AuthenticationRequest;
 import com.company.youtubeanalyticstool.model.AuthenticationResponse;
-import com.company.youtubeanalyticstool.model.user.UserDAO;
+import com.company.youtubeanalyticstool.model.UserDAO;
 import com.company.youtubeanalyticstool.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

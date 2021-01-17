@@ -1,9 +1,11 @@
 package com.company.youtubeanalyticstool.service;
 
 import com.company.youtubeanalyticstool.exception.ResourceNotFoundException;
-import com.company.youtubeanalyticstool.model.videos.ChannelStats;
-import com.company.youtubeanalyticstool.model.videos.VideoStats;
+import com.company.youtubeanalyticstool.model.ChannelStats;
+import com.company.youtubeanalyticstool.model.UserDAO;
+import com.company.youtubeanalyticstool.model.VideoStats;
 import com.company.youtubeanalyticstool.repository.ChannelStatsRepository;
+import com.company.youtubeanalyticstool.repository.UserRepository;
 import com.company.youtubeanalyticstool.repository.VideoStatsRepository;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -33,6 +35,8 @@ public class YouTubeAPIService {
     VideoStatsRepository videoStatsRepository;
     @Autowired
     ChannelStatsRepository channelStatsRepository;
+    @Autowired
+    UserRepository userRepository;
 
     private YouTube youTube;
 
@@ -43,7 +47,10 @@ public class YouTubeAPIService {
                 .setYouTubeRequestInitializer(new YouTubeRequestInitializer(env.getProperty("youtube.apikey"))).build();
     }
 
-    public VideoStats saveVideoStats(String videoID) throws IOException {
+    public VideoStats saveVideoStats(String videoID, String username) throws IOException {
+
+        UserDAO userDAO= userRepository.findByUsername(username);
+
         YouTube.Videos.List list = youTube.videos().list("statistics");
         list.setId(videoID);
         Video v = list.execute().getItems().get(0);
@@ -54,7 +61,7 @@ public class YouTubeAPIService {
         videoStats.setDislikeCount(v.getStatistics().getDislikeCount().longValue());
         videoStats.setCommentCount(v.getStatistics().getCommentCount().longValue());
         videoStats.setViewsCount(v.getStatistics().getViewCount().longValue());
-
+        videoStats.setUserDAO(userDAO);
         return videoStatsRepository.save(videoStats);
     }
 
@@ -121,7 +128,9 @@ public class YouTubeAPIService {
         return channelStatsRepository.findAll();
     }
 
-    public List<VideoStats> saveAllChannelVideos(long channelId) throws IOException {
+    public List<VideoStats> saveAllChannelVideos(long channelId, String username) throws IOException {
+
+        UserDAO user = userRepository.findByUsername(username);
 
         ChannelStats channel = channelStatsRepository.findById(channelId)
                 .orElseThrow(() -> new ResourceNotFoundException("Channel", "id", channelId));
@@ -141,7 +150,7 @@ public class YouTubeAPIService {
 
                 if(singleVideo.getId().getVideoId() != null){
 
-                    VideoStats videoStats = saveVideoStats(singleVideo.getId().getVideoId());
+                    VideoStats videoStats = saveVideoStats(singleVideo.getId().getVideoId(), username);
                     videoStats.setChannelStats(channel);
                     videoStatsRepository.save(videoStats);
                 }

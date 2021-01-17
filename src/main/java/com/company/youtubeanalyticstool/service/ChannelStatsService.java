@@ -1,6 +1,6 @@
 package com.company.youtubeanalyticstool.service;
 
-import com.company.youtubeanalyticstool.model.videos.ChannelStats;
+import com.company.youtubeanalyticstool.model.ChannelStats;
 
 import java.util.List;
 

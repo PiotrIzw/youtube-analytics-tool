@@ -1,7 +1,7 @@
 package com.company.youtubeanalyticstool.service;
 
 import com.company.youtubeanalyticstool.exception.ResourceNotFoundException;
-import com.company.youtubeanalyticstool.model.videos.ChannelStats;
+import com.company.youtubeanalyticstool.model.ChannelStats;
 import com.company.youtubeanalyticstool.repository.ChannelStatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

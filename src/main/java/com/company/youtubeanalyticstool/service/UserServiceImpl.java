@@ -1,6 +1,6 @@
 package com.company.youtubeanalyticstool.service;
 
-import com.company.youtubeanalyticstool.model.user.UserDAO;
+import com.company.youtubeanalyticstool.model.UserDAO;
 import com.company.youtubeanalyticstool.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

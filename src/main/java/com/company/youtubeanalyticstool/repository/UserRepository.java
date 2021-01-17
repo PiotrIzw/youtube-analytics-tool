@@ -1,6 +1,6 @@
 package com.company.youtubeanalyticstool.repository;
 
-import com.company.youtubeanalyticstool.model.user.UserDAO;
+import com.company.youtubeanalyticstool.model.UserDAO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

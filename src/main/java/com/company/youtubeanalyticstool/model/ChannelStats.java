@@ -1,6 +1,6 @@
-package com.company.youtubeanalyticstool.model.videos;
+package com.company.youtubeanalyticstool.model;
 
-import com.company.youtubeanalyticstool.model.videos.VideoStats;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -21,6 +21,11 @@ public class ChannelStats {
     private String channelId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "channelStats")
     private List<VideoStats> videoStats;
+
+    @ManyToOne()
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private UserDAO userDAO;
 
     public ChannelStats(String channelName, long subscriptionsCount, String channelId) {
         this.channelName = channelName;
@@ -71,4 +76,11 @@ public class ChannelStats {
         this.videoStats = videoStats;
     }
 
+    public UserDAO getUserDAO() {
+        return userDAO;
+    }
+
+    public void setUserDAO(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
 }

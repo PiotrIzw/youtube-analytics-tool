@@ -1,5 +1,6 @@
-package com.company.youtubeanalyticstool.model.videos;
+package com.company.youtubeanalyticstool.model;
 
+import com.company.youtubeanalyticstool.model.ChannelStats;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -25,14 +26,20 @@ public class VideoStats {
     @JoinColumn(name = "channel_id")
     @JsonIgnore
     private ChannelStats channelStats;
+    @ManyToOne()
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private UserDAO userDAO;
 
-    public VideoStats(String videoID, long viewsCount, long likeCount, long dislikeCount, long commentCount, ChannelStats channelStats) {
+
+    public VideoStats(String videoID, long viewsCount, long likeCount, long dislikeCount, long commentCount, ChannelStats channelStats, UserDAO userDAO) {
         this.videoID = videoID;
         this.viewsCount = viewsCount;
         this.likeCount = likeCount;
         this.dislikeCount = dislikeCount;
         this.commentCount = commentCount;
         this.channelStats = channelStats;
+        this.userDAO = userDAO;
     }
 
     public VideoStats(){
@@ -93,5 +100,13 @@ public class VideoStats {
 
     public void setChannelStats(ChannelStats channelStats) {
         this.channelStats = channelStats;
+    }
+
+    public UserDAO getUserDAO() {
+        return userDAO;
+    }
+
+    public void setUserDAO(UserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 }

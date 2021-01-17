@@ -1,4 +1,4 @@
-package com.company.youtubeanalyticstool.model.user;
+package com.company.youtubeanalyticstool.model;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -18,6 +18,13 @@ public class UserDAO {
     private String password;
     @Column
     private String role;
+
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userDAO")
+    List<ChannelStats> channelStatsList;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userDAO")
+    List<VideoStats> videoStatsList;
 
     public UserDAO(String username, String password, List<SimpleGrantedAuthority> roles) {
     }
