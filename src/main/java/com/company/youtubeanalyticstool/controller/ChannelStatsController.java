@@ -26,14 +26,12 @@ public class ChannelStatsController {
     @Autowired
     UserServiceImpl userService;
 
-    //user,admin
     @PostMapping("/channel")
     public ChannelStats saveChannelStats(@Valid @RequestBody String channelId, Principal principal) throws IOException {
         return youTubeAPIService.saveChannelStats(channelId, principal.getName());
     }
 
 
-    //user, admin
     @PostMapping("/channel/{id}")
     public List<VideoStats> saveChannelVideoStats(@PathVariable long id, Principal principal) throws IOException {
 
